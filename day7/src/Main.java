@@ -27,8 +27,7 @@ public class Main {
     }
 
     private static long partOne(List<Integer> values) {
-        int median = (int) values.stream().mapToInt(i -> i).sorted()
-                .skip((values.size() - 1) / 2).limit(2 - values.size() % 2).average().getAsDouble();
+        int median = (int) Math.floor(values.stream().mapToInt(i -> i).average().getAsDouble());
         return values.stream().mapToInt(v -> Math.abs(v - median)).sum();
     }
 

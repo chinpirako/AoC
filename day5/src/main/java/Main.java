@@ -108,12 +108,10 @@ public class Main {
         var startTime = System.nanoTime();
         var content = Files.readAllLines(Paths.get("input.txt"))
                 .stream()
-                .filter(c -> !c.equals(""))
-                .collect(Collectors.toList());
+                .filter(c -> !c.equals("")).toList();
         var tmp = content
                 .stream()
-                .map(l -> l.split(" -> "))
-                .collect(Collectors.toList());
+                .map(l -> l.split(" -> ")).toList();
 
         for (String[] coords : tmp) {
             var fromString = Arrays.stream(coords[0].split(",")).mapToInt(Integer::parseInt).toArray();
@@ -131,7 +129,7 @@ public class Main {
 
     private static int partOne(List<Segment> segments) {
         var filteredSegments = segments.stream().filter(s -> !s.isSloped()).collect(Collectors.toList());
-        return countIntersections((List<Segment>) filteredSegments);
+        return countIntersections(filteredSegments);
     }
 
     private static int partTwo(List<Segment> segments) {

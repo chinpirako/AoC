@@ -20,7 +20,7 @@ public class Main {
     }
 
     private static List<Integer> readFile() throws IOException {
-        return Files.readAllLines(Paths.get("input.txt")).stream().map((i) -> Integer.parseInt(i)).collect(Collectors.toList());
+        return Files.readAllLines(Paths.get("input.txt")).stream().map(Integer::parseInt).collect(Collectors.toList());
     }
 
     private static int partOne(List<Integer> values) {
