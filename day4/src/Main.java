@@ -104,7 +104,7 @@ public class Main {
     }
 
     private static Bingo readFile() throws IOException {
-        var content = Files.readAllLines(Paths.get("./day4/input.txt"))
+        var content = Files.readAllLines(Paths.get("input.txt"))
                 .stream()
                 .filter(c -> !c.equals(""))
                 .collect(Collectors.toList());
