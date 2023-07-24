@@ -115,9 +115,6 @@ public class Main {
         findOverSize(values, overSize, sizeToFree);
 
         overSize.sort(Comparator.comparingInt(Folder::getSize));
-        for (Folder folder : overSize) {
-            System.out.println(folder.name + " " + folder.getSize());
-        }
         return overSize.get(0).getSize();
     }
 
