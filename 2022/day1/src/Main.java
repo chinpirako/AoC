@@ -18,7 +18,7 @@ public class Main {
     private static List<List<Long>> readFile() throws IOException {
         List<List<Long>> result = new ArrayList<>();
         List<Long> temp = new ArrayList<>();
-        List<String> input = Files.readAllLines(Paths.get("input.txt"));
+        List<String> input = Files.readAllLines(Pathas.get("input.txt"));
         for (String l : input) {
             if (!l.equals("")) {
                 temp.add(Long.parseLong(l));
