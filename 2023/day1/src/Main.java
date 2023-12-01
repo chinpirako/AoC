@@ -42,7 +42,8 @@ public class Main {
 
     private static long partTwo(List<String> values) {
         List<String> newValues =
-                values.stream().map(s -> {
+                values.stream()
+                        .map(s -> {
                             String newString = s;
                             for (Map.Entry<String, String> entry : OVERLAPS.entrySet()) {
                                 newString = newString.replace(entry.getKey(), entry.getValue());
