@@ -23,26 +23,19 @@ public class Main {
         return compute(values);
     }
 
-    private static Long compute(List<String> values) {
-        return values.stream()
+    private static Integer compute(List<String> values) {
+        return values.parallelStream()
                 .map(s -> Arrays.stream(s.split(""))
-                        .filter(c -> {
-                            try {
-                                Integer.parseInt(c);
-                                return true;
-                            } catch (Exception e) {
-                                return false;
-                            }
-                        })
+                        .filter(c -> c.matches("[0-9]"))
                         .toList())
                 .map(l -> l.get(0) + l.get(l.size() - 1))
-                .map(Long::parseLong)
-                .reduce(0L, Long::sum);
+                .map(Integer::parseInt)
+                .reduce(0, Integer::sum);
     }
 
     private static long partTwo(List<String> values) {
         List<String> newValues =
-                values.stream()
+                values.parallelStream()
                         .map(s -> {
                             String newString = s;
                             for (Map.Entry<String, String> entry : OVERLAPS.entrySet()) {
