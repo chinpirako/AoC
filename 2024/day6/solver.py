@@ -22,9 +22,10 @@ def find_obstacles(input_file):
 
 
 def get_traversed_positions(guard_position, guard_orientation, obstacles, max_x, max_y, traversed_positions=None):
-    if traversed_positions is None:
-        traversed_positions = []
     x, y = guard_position
+    if traversed_positions is None:
+        traversed_positions = set()
+    traversed_positions_list = []
 
     is_loop = False
 
@@ -46,7 +47,8 @@ def get_traversed_positions(guard_position, guard_orientation, obstacles, max_x,
         if (x, y, guard_orientation) in traversed_positions:
             is_loop = True
             break
-        traversed_positions.append((x, y, guard_orientation))
+        traversed_positions.add((x, y, guard_orientation))
+        traversed_positions_list.append((x, y, guard_orientation))
 
         if guard_orientation == "^":
             if x > 0 and y in obstacles_by_x.get(x - 1, []):
@@ -69,7 +71,7 @@ def get_traversed_positions(guard_position, guard_orientation, obstacles, max_x,
             else:
                 y -= 1
 
-    return traversed_positions, is_loop
+    return traversed_positions, traversed_positions_list, is_loop
 
 
 def run_part_1():
@@ -81,8 +83,8 @@ def run_part_1():
     max_x = len(input_file[0])
     max_y = len(input_file)
 
-    traversed_positions_with_orientation, _ = get_traversed_positions(guard_position, guard_orientation, obstacles,
-                                                                      max_x, max_y)
+    traversed_positions_with_orientation, _, _ = get_traversed_positions(guard_position, guard_orientation, obstacles,
+                                                                         max_x, max_y)
     traversed_positions = set([(x, y) for x, y, _ in traversed_positions_with_orientation])
 
     return len(traversed_positions)
@@ -99,8 +101,9 @@ def run_part_2():
 
     new_obstacles_to_check = []
 
-    traversed_positions_with_orientation, _ = get_traversed_positions(guard_position, guard_orientation, obstacles,
-                                                                      max_x, max_y)
+    traversed_positions_with_orientation, traversed_positions_with_orientation_list, _ = get_traversed_positions(
+        guard_position, guard_orientation, obstacles,
+        max_x, max_y)
 
     traversed_positions = set([(x, y) for x, y, _ in traversed_positions_with_orientation])
 
@@ -117,7 +120,7 @@ def run_part_2():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         for i, j in new_obstacles_to_check:
             # Get path before the obstacle
-            new_traversed_positions_with_orientation = traversed_positions_with_orientation.copy()
+            new_traversed_positions_with_orientation = traversed_positions_with_orientation_list.copy()
             index = 0
             while new_traversed_positions_with_orientation[index][0] != i or \
                     new_traversed_positions_with_orientation[index][1] != j:
@@ -127,9 +130,12 @@ def run_part_2():
             guard_position = (last_guard_position[0], last_guard_position[1])
             guard_orientation = last_guard_position[2]
 
-            new_traversed_positions_with_orientation = new_traversed_positions_with_orientation[:index - 1]
+            new_traversed_positions_with_orientation = set(new_traversed_positions_with_orientation[:index - 1])
+
             # Multiprocessing
-            futures.append(executor.submit(check_with_new_obstacle, guard_orientation, guard_position, i, j, max_x, max_y, obstacles, new_traversed_positions_with_orientation))
+            futures.append(
+                executor.submit(check_with_new_obstacle, guard_orientation, guard_position, i, j, max_x, max_y,
+                                obstacles, new_traversed_positions_with_orientation))
 
         for future in concurrent.futures.as_completed(futures):
             result += future.result()
@@ -137,11 +143,12 @@ def run_part_2():
     return result
 
 
-def check_with_new_obstacle(guard_orientation, guard_position, i, j, max_x, max_y, obstacles, traversed_positions=None):
+def check_with_new_obstacle(guard_orientation, guard_position, i, j, max_x, max_y, obstacles,
+                            new_traversed_positions_with_orientation):
     new_obstacles = obstacles.copy()
     new_obstacles.append((i, j))
-    _, is_loop = get_traversed_positions(guard_position, guard_orientation, new_obstacles, max_x, max_y,
-                                         traversed_positions)
+    _, _, is_loop = get_traversed_positions(guard_position, guard_orientation, new_obstacles, max_x, max_y,
+                                            new_traversed_positions_with_orientation)
     return 1 if is_loop else 0
 
 
