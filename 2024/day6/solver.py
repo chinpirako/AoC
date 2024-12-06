@@ -27,7 +27,6 @@ def get_traversed_positions(guard_position, guard_orientation, obstacles, max_x,
     x, y = guard_position
 
     is_loop = False
-    has_changed_direction = False
 
     # Group all obstacles by x
     obstacles_by_x = {}
@@ -44,35 +43,29 @@ def get_traversed_positions(guard_position, guard_orientation, obstacles, max_x,
         obstacles_by_y[obstacle[1]].append(obstacle[0])
 
     while 0 <= x < max_x and 0 <= y < max_y:
-        if not has_changed_direction:
-            if (x, y, guard_orientation) in traversed_positions:
-                is_loop = True
-                break
-            traversed_positions.append((x, y, guard_orientation))
-        has_changed_direction = False
+        if (x, y, guard_orientation) in traversed_positions:
+            is_loop = True
+            break
+        traversed_positions.append((x, y, guard_orientation))
 
         if guard_orientation == "^":
             if x > 0 and y in obstacles_by_x.get(x - 1, []):
                 guard_orientation = ">"
-                has_changed_direction = True
             else:
                 x -= 1
         elif guard_orientation == "v":
             if x < max_x - 1 and y in obstacles_by_x.get(x + 1, []):
                 guard_orientation = "<"
-                has_changed_direction = True
             else:
                 x += 1
         elif guard_orientation == ">":
             if y < max_y - 1 and x in obstacles_by_y.get(y + 1, []):
                 guard_orientation = "v"
-                has_changed_direction = True
             else:
                 y += 1
         elif guard_orientation == "<":
             if y > 0 and x in obstacles_by_y.get(y - 1, []):
                 guard_orientation = "^"
-                has_changed_direction = True
             else:
                 y -= 1
 
