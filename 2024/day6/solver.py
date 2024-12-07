@@ -13,11 +13,11 @@ def find_guard_position(input_file):
 
 
 def find_obstacles(input_file):
-    obstacles = []
+    obstacles = set()
     for i, row in enumerate(input_file):
         for j, cell in enumerate(row):
             if cell == "#":
-                obstacles.append((i, j))
+                obstacles.add((i, j))
     return obstacles
 
 
@@ -29,44 +29,31 @@ def get_traversed_positions(guard_position, guard_orientation, obstacles, max_x,
 
     is_loop = False
 
-    # Group all obstacles by x
-    obstacles_by_x = {}
-    for obstacle in obstacles:
-        if obstacle[0] not in obstacles_by_x:
-            obstacles_by_x[obstacle[0]] = []
-        obstacles_by_x[obstacle[0]].append(obstacle[1])
-
-    # Group all obstacles by y
-    obstacles_by_y = {}
-    for obstacle in obstacles:
-        if obstacle[1] not in obstacles_by_y:
-            obstacles_by_y[obstacle[1]] = []
-        obstacles_by_y[obstacle[1]].append(obstacle[0])
-
     while 0 <= x < max_x and 0 <= y < max_y:
-        if (x, y, guard_orientation) in traversed_positions:
+        current_set_size = len(traversed_positions)
+        traversed_positions.add((x, y, guard_orientation))
+        if len(traversed_positions) == current_set_size:
             is_loop = True
             break
-        traversed_positions.add((x, y, guard_orientation))
         traversed_positions_list.append((x, y, guard_orientation))
 
         if guard_orientation == "^":
-            if x > 0 and y in obstacles_by_x.get(x - 1, []):
+            if (x - 1, y) in obstacles:
                 guard_orientation = ">"
             else:
                 x -= 1
         elif guard_orientation == "v":
-            if x < max_x - 1 and y in obstacles_by_x.get(x + 1, []):
+            if (x + 1, y) in obstacles:
                 guard_orientation = "<"
             else:
                 x += 1
         elif guard_orientation == ">":
-            if y < max_y - 1 and x in obstacles_by_y.get(y + 1, []):
+            if (x, y + 1) in obstacles:
                 guard_orientation = "v"
             else:
                 y += 1
         elif guard_orientation == "<":
-            if y > 0 and x in obstacles_by_y.get(y - 1, []):
+            if (x, y - 1) in obstacles:
                 guard_orientation = "^"
             else:
                 y -= 1
@@ -146,7 +133,7 @@ def run_part_2():
 def check_with_new_obstacle(guard_orientation, guard_position, i, j, max_x, max_y, obstacles,
                             new_traversed_positions_with_orientation):
     new_obstacles = obstacles.copy()
-    new_obstacles.append((i, j))
+    new_obstacles.add((i, j))
     _, _, is_loop = get_traversed_positions(guard_position, guard_orientation, new_obstacles, max_x, max_y,
                                             new_traversed_positions_with_orientation)
     return 1 if is_loop else 0
