@@ -14,8 +14,8 @@ def run_part_1():
         combinations = set(itertools.combinations(value, 2))
         for combination in combinations:
             vector = (combination[1][0] - combination[0][0], combination[1][1] - combination[0][1])
-            antinode_1 = (combination[0][0] - vector[0], combination[0][1] - vector[1])
-            antinode_2 = (combination[1][0] + vector[0], combination[1][1] + vector[1])
+            antinode_1, antinode_2 = (combination[0][0] - vector[0], combination[0][1] - vector[1]), (
+            combination[1][0] + vector[0], combination[1][1] + vector[1])
             if is_in_bounds(antinode_1[0], antinode_1[1], input_array):
                 antinodes.add(antinode_1)
             if is_in_bounds(antinode_2[0], antinode_2[1], input_array):
@@ -45,14 +45,13 @@ def run_part_2():
         for combination in combinations:
             vector = (combination[1][0] - combination[0][0], combination[1][1] - combination[0][1])
             i = 0
-            in_bounds_1 = True
-            in_bounds_2 = True
+            in_bounds_1, in_bounds_2 = True, True
             while in_bounds_1 or in_bounds_2:
-                antinode_1 = (combination[0][0] - vector[0] * i, combination[0][1] - vector[1] * i)
-                antinode_2 = (combination[1][0] + vector[0] * i, combination[1][1] + vector[1] * i)
+                antinode_1, antinode_2 = (combination[0][0] - vector[0] * i, combination[0][1] - vector[1] * i), (
+                    combination[1][0] + vector[0] * i, combination[1][1] + vector[1] * i)
 
-                in_bounds_1 = is_in_bounds(antinode_1[0], antinode_1[1], input_array)
-                in_bounds_2 = is_in_bounds(antinode_2[0], antinode_2[1], input_array)
+                in_bounds_1, in_bounds_2 = is_in_bounds(antinode_1[0], antinode_1[1], input_array), is_in_bounds(
+                    antinode_2[0], antinode_2[1], input_array)
 
                 if in_bounds_1:
                     antinodes.add(antinode_1)
