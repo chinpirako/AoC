@@ -43,14 +43,12 @@ def run_part_2():
     valid_positions = [pos for pos, adjs in pos_and_adjs if len(adjs) < 4]
     total = len(valid_positions)
     paper_to_remove = set(valid_positions)
-    number_of_removable_toilet_papers = total
-
-    new_layout = [row.copy() for row in puzzle_input]
+    number_of_removable_toilet_papers = len(paper_to_remove)
 
     while number_of_removable_toilet_papers > 0:
         for pos in paper_to_remove:
-            new_layout[pos[0]][pos[1]] = '.'
-        pos_and_adjs = get_toilet_paper_positions_and_adjacents(new_layout)
+            puzzle_input[pos[0]][pos[1]] = '.'
+        pos_and_adjs = get_toilet_paper_positions_and_adjacents(puzzle_input)
         valid_positions = [pos for pos, adjs in pos_and_adjs if len(adjs) < 4]
         paper_to_remove = set(valid_positions)
         number_of_removable_toilet_papers = len(paper_to_remove)
